@@ -48,7 +48,7 @@ $ACCESS = $config['access_token'];
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      max-width: 1200px;
+      max-width: 1300px;
       margin: auto;
     }
 
@@ -214,7 +214,7 @@ $ACCESS = $config['access_token'];
       border-radius: 10px;
       margin-bottom: 20px !important;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      max-width: 1160px;
+      max-width: 1260px;
       margin: auto;
     }
 
@@ -869,7 +869,7 @@ $ACCESS = $config['access_token'];
         holdings.forEach(h => {
           const avg = Number(h.averagePrice || 0);
           const ltp = Number(h.closingPrice || 0);
-          const qty = Number(h.quantity || 0);
+          const qty = Number(h.sellableQuantity || 0);
           const gain = (ltp - avg) * qty;
           const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
           const gainColor = gain >= 0 ? 'green' : 'red';
