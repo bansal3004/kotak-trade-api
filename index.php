@@ -188,6 +188,11 @@ $ACCESS = $config['access_token'];
       max-height: 530px;
       overflow-y: auto;
     }
+    .hold-container {
+      max-height: 630px;
+      overflow-y: auto;
+    }
+
 
     .orders-container::-webkit-scrollbar {
       width: 6px;
@@ -494,7 +499,7 @@ $ACCESS = $config['access_token'];
       <!-- Holdings -->
 
       <!-- Holdings -->
-      <div class="card" style="margin-top:16px">
+      <div class="card hold-container" style="margin-top:16px">
         <h2 style="display:flex;justify-content:space-between;align-items:center;">
           <span>Holdings</span>
           <button id="refreshHoldingsBtn" class="refresh-btn">🔄 Refresh</button>
