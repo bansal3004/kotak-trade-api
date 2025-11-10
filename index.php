@@ -189,7 +189,7 @@ $ACCESS = $config['access_token'];
       overflow-y: auto;
     }
     .hold-container {
-      max-height: 630px;
+      max-height: 700px;
       overflow-y: auto;
     }
 
