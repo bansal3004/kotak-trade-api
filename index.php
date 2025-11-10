@@ -437,8 +437,12 @@ $ACCESS = $config['access_token'];
       <!-- Funds -->
       <!-- Funds -->
       <!-- Funds -->
-      <div class="card">
-        <h2>Funds</h2>
+      <!-- Funds -->
+      <div class="card" style="position: relative;">
+        <h2 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Funds</span>
+          <button id="refreshFundsBtn" class="refresh-btn" title="Refresh funds">🔄 Refresh</button>
+        </h2>
 
         <div class="funds-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
@@ -877,34 +881,64 @@ $ACCESS = $config['access_token'];
 
 
 
-    // ===== Funds =====
+    // ===== Funds (Manual Refresh) =====
     async function loadFunds() {
+      const btn = document.getElementById("refreshFundsBtn");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "⏳ Refreshing...";
+      }
+
       try {
-        const res = await fetch('fetch_funds.php', {
+        const res = await fetch("fetch_funds.php", {
           cache: "no-store"
         });
         const d = await res.json();
 
-        if (d && d.stat === 'Ok') {
-          document.getElementById('avlCash').textContent = '₹' + Number(d.avlCash || 0).toFixed(2);
-          document.getElementById('reqMrgn').textContent = Number(d.reqdMrgn || 0).toFixed(2);
-          document.getElementById('usedMrgn').textContent = Number(d.mrgnUsd || 0).toFixed(2);
-          document.getElementById('totMrgnUsd').textContent = Number(d.totMrgnUsd || 0).toFixed(2);
-          document.getElementById('avlMrgn').textContent = (Number(d.avlMrgn || 0).toFixed(2) - Number(d.mrgnUsd || 0).toFixed(2));
-          document.getElementById('ordMrgn').textContent = Number(d.ordMrgn || 0).toFixed(2);
-          document.getElementById('insufFund').textContent = Number(d.insufFund || 0).toFixed(2);
-          document.getElementById('rmsVldtd').textContent = d.rmsVldtd || '—';
-          document.getElementById('rmsVldtd').style.color = d.rmsVldtd === 'OK' ? '#0aa70a' : '#d32f2f';
-          document.getElementById('fundTime').textContent = d.timestamp || '';
+        if (d && d.stat === "Ok") {
+          const avlMrgn = Number(d.avlMrgn || 0);
+          const usedMrgn = Number(d.mrgnUsd || 0);
+          const balance = avlMrgn - usedMrgn;
+
+          document.getElementById("avlCash").textContent = "₹" + Number(d.avlCash || 0).toFixed(2);
+          document.getElementById("reqMrgn").textContent = Number(d.reqdMrgn || 0).toFixed(2);
+          document.getElementById("usedMrgn").textContent = usedMrgn.toFixed(2);
+          document.getElementById("totMrgnUsd").textContent = Number(d.totMrgnUsd || 0).toFixed(2);
+          document.getElementById("ordMrgn").textContent = Number(d.ordMrgn || 0).toFixed(2);
+          document.getElementById("insufFund").textContent = Number(d.insufFund || 0).toFixed(2);
+          document.getElementById("avlMrgn").textContent = "₹" + balance.toFixed(2);
+          document.getElementById("rmsVldtd").textContent = d.rmsVldtd || "—";
+          document.getElementById("rmsVldtd").style.color = d.rmsVldtd === "OK" ? "#0aa70a" : "#d32f2f";
+          document.getElementById("fundTime").textContent = d.timestamp || new Date().toLocaleTimeString();
         } else {
-          document.getElementById('avlCash').textContent = '—';
+          document.getElementById("avlCash").textContent = "—";
+        }
+
+        if (btn) {
+          btn.textContent = "✅ Updated";
+          setTimeout(() => {
+            btn.textContent = "🔄 Refresh";
+            btn.disabled = false;
+          }, 1500);
         }
       } catch (err) {
-        console.error('Funds Fetch Error:', err);
+        console.error("Funds Fetch Error:", err);
+        if (btn) {
+          btn.textContent = "❌ Error";
+          setTimeout(() => {
+            btn.textContent = "🔄 Refresh";
+            btn.disabled = false;
+          }, 2000);
+        }
       }
     }
-    setInterval(loadFunds, 6000);
+
+    // 🟢 Manual trigger
+    document.getElementById("refreshFundsBtn").addEventListener("click", loadFunds);
+
+    // 🔰 Load once on page load
     loadFunds();
+
 
     // ===== Holdings =====
     async function loadHoldings() {
