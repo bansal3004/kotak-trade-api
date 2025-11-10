@@ -341,6 +341,7 @@ $ACCESS = $config['access_token'];
                 <th>Qty</th>
                 <th>Side</th>
                 <th>Price</th>
+                <th>Avg Prc</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -461,7 +462,7 @@ $ACCESS = $config['access_token'];
         }
       });
     }
-    setInterval(refreshIndices, 1500);
+    setInterval(refreshIndices, 5000);
     refreshIndices();
 
     // ===== Suggestions =====
@@ -710,6 +711,7 @@ $ACCESS = $config['access_token'];
           <td>${o.qty || '-'}</td>
           <td>${o.trnsTp || '-'}</td>
           <td>${o.prc || '-'}</td>
+          <td>${o.avgPrc || '-'}</td>
           <td>${o.ordSt || o.stat || '-'}${rej}</td>
         </tr>`
           );
