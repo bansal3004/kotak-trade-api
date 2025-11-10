@@ -1,0 +1,15 @@
+{
+    "log_690c7f963c0272.65379176": {
+        "id": "log_690c7f963c0272.65379176",
+        "time": "06 Nov 11:59:34",
+        "ip": "127.0.0.1",
+        "parameters": {
+            "currency": "INR",
+            "merchant_ref": "SITE_7646",
+            "amount": 56,
+            "method": "HOSTED"
+        },
+        "response": "{\"url\":\"https://pg.starpg.co/pg-hosted/?session_key=3/OF0nWqbvRjoA2/FAgMMHOQbO/n3t57ZLRRr8QyMi4HLe0Rb1B32vrQiQtWbyilZlbuldnOdqlqYBVhYDuO0Ie2qxAALCRB29ds6aqH3f4=\"}",
+        "_hash": "29ce36b3d12b072c07a0b793eee6c260"
+    }
+}
