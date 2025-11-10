@@ -185,7 +185,7 @@ $ACCESS = $config['access_token'];
     }
 
     .orders-container {
-      max-height: 230px;
+      max-height: 530px;
       overflow-y: auto;
     }
 
@@ -229,8 +229,8 @@ $ACCESS = $config['access_token'];
 
     #holdRefreshBtn {
       position: absolute;
-      bottom: 12px;
-      right: 16px;
+      top: 5px;
+      right: 20px;
       background: linear-gradient(135deg, #2563eb, #1e40af);
       color: #fff;
       font-weight: 600;
