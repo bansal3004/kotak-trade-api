@@ -328,6 +328,30 @@ $ACCESS = $config['access_token'];
         </div>
         <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
       </div>
+
+      <!-- Orders -->
+      <div class="card" style="margin-top:16px">
+        <h2>Orders</h2>
+        <div class="orders-container">
+          <table id="ordersTbl">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Symbol</th>
+                <th>Qty</th>
+                <th>Side</th>
+                <th>Price</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="6">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- Right Side -->
@@ -389,6 +413,8 @@ $ACCESS = $config['access_token'];
 
       <div class="card" style="margin-top:16px; position: relative;">
         <h2 style="margin-bottom:12px;">Holdings</h2>
+        <!-- Floating Refresh Button -->
+        <button id="holdRefreshBtn" title="Refresh holdings">Refresh</button>
 
         <table id="holdTbl">
           <thead>
@@ -407,35 +433,8 @@ $ACCESS = $config['access_token'];
           </tbody>
         </table>
 
-        <!-- Floating Refresh Button -->
-        <button id="holdRefreshBtn" title="Refresh holdings">Refresh</button>
       </div>
 
-
-
-      <!-- Orders -->
-      <div class="card" style="margin-top:16px">
-        <h2>Orders</h2>
-        <div class="orders-container">
-          <table id="ordersTbl">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Symbol</th>
-                <th>Qty</th>
-                <th>Side</th>
-                <th>Price</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="6">Loading...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
 
   </div>
