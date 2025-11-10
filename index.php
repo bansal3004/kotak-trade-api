@@ -204,10 +204,62 @@ $ACCESS = $config['access_token'];
       font-size: 11px;
       margin-top: 2px;
     }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      max-width: 1160px;
+      margin: auto;
+    }
+
+    .logout {
+      background: #d32f2f;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    #holdRefreshBtn {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      transition: 0.3s ease;
+      margin-top: 10px;
+    }
+
+    #holdRefreshBtn:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+      transform: scale(1.05);
+    }
+
+    #holdRefreshBtn:active {
+      transform: scale(0.96);
+    }
   </style>
 </head>
 
 <body>
+  <div class="header-bar">
+    <h1 style="font-size:18px;">Kotak Trade Dashboard</h1>
+    <a href="logout.php" class="logout">Logout</a>
+  </div>
+
   <div class="container">
 
     <!-- Left Side -->
@@ -289,8 +341,13 @@ $ACCESS = $config['access_token'];
         <div class="funds-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
 
           <div>
+            <div class="muted">Balance</div>
+            <div style="font-size:20px;font-weight:700;color:#111" id="avlMrgn">—</div>
+          </div>
+
+          <div>
             <div class="muted">Available Cash</div>
-            <div style="font-size:20px;font-weight:700;color:#111" id="avlCash">—</div>
+            <div style="font-size:16px;font-weight:600;color:#555"><span id="avlCash">—</span></div>
           </div>
 
           <div>
@@ -329,8 +386,10 @@ $ACCESS = $config['access_token'];
 
 
       <!-- Holdings -->
-      <div class="card" style="margin-top:16px">
-        <h2>Holdings</h2>
+
+      <div class="card" style="margin-top:16px; position: relative;">
+        <h2 style="margin-bottom:12px;">Holdings</h2>
+
         <table id="holdTbl">
           <thead>
             <tr>
@@ -338,15 +397,21 @@ $ACCESS = $config['access_token'];
               <th>Qty</th>
               <th>Avg</th>
               <th>LTP</th>
+              <th>P&L (₹ / %)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colspan="4">No holdings</td>
+              <td colspan="5">Loading holdings...</td>
             </tr>
           </tbody>
         </table>
+
+        <!-- Floating Refresh Button -->
+        <button id="holdRefreshBtn" title="Refresh holdings">Refresh</button>
       </div>
+
+
 
       <!-- Orders -->
       <div class="card" style="margin-top:16px">
@@ -672,6 +737,7 @@ $ACCESS = $config['access_token'];
           document.getElementById('reqMrgn').textContent = Number(d.reqdMrgn || 0).toFixed(2);
           document.getElementById('usedMrgn').textContent = Number(d.mrgnUsd || 0).toFixed(2);
           document.getElementById('totMrgnUsd').textContent = Number(d.totMrgnUsd || 0).toFixed(2);
+          document.getElementById('avlMrgn').textContent = (Number(d.avlMrgn || 0).toFixed(2) - Number(d.mrgnUsd || 0).toFixed(2));
           document.getElementById('ordMrgn').textContent = Number(d.ordMrgn || 0).toFixed(2);
           document.getElementById('insufFund').textContent = Number(d.insufFund || 0).toFixed(2);
           document.getElementById('rmsVldtd').textContent = d.rmsVldtd || '—';
@@ -686,7 +752,64 @@ $ACCESS = $config['access_token'];
     }
     setInterval(loadFunds, 6000);
     loadFunds();
+
+    // ===== Holdings =====
+    async function loadHoldings() {
+      try {
+        const res = await fetch('fetch_holdings.php', {
+          cache: 'no-store'
+        });
+        const data = await res.json();
+        const tb = document.querySelector('#holdTbl tbody');
+        tb.innerHTML = '';
+
+        const holdings = data.data || [];
+
+        if (!Array.isArray(holdings) || holdings.length === 0) {
+          tb.innerHTML = '<tr><td colspan="5">No holdings found</td></tr>';
+          return;
+        }
+
+        holdings.forEach(h => {
+          const avg = Number(h.averagePrice || 0);
+          const ltp = Number(h.closingPrice || 0);
+          const qty = Number(h.quantity || 0);
+          const gain = (ltp - avg) * qty;
+          const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
+          const gainColor = gain >= 0 ? 'green' : 'red';
+          const logo = h.logoUrl ? `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">` : '';
+
+          tb.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>
+            ${logo}<b>${h.symbol || '-'}</b><br>
+            <span class="muted" style="font-size:11px;">${h.instrumentName || ''}</span>
+          </td>
+          <td>${qty}</td>
+          <td>${avg.toFixed(2)}</td>
+          <td>${ltp.toFixed(2)}</td>
+          <td class="${gainColor}">
+            ${gain >= 0 ? '▲' : '▼'} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)
+          </td>
+        </tr>
+      `);
+        });
+
+      } catch (err) {
+        console.error('❌ Error loading holdings:', err);
+        document.querySelector('#holdTbl tbody').innerHTML =
+          '<tr><td colspan="5">⚠️ Error fetching holdings</td></tr>';
+      }
+    }
+
+    // 🔄 Auto-refresh every 10 seconds
+    setInterval(loadHoldings, 10000);
+
+    // Initial load
+    loadHoldings();
   </script>
+
+
 </body>
 
 </html>
