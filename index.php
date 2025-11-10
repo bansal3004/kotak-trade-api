@@ -293,6 +293,30 @@ $ACCESS = $config['access_token'];
       background: linear-gradient(90deg, #1e40af, #1d4ed8);
       transform: scale(1.05);
     }
+
+    .refresh-btn {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+      transition: 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: linear-gradient(90deg, #1e40af, #1d4ed8);
+      transform: scale(1.05);
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.4);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -306,9 +330,13 @@ $ACCESS = $config['access_token'];
 
     <!-- Left Side -->
     <div>
+
       <!-- Market Indices -->
       <div class="card">
-        <h2>Market Indices <span class="muted">• auto refresh</span></h2>
+        <h2 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Market Indices</span>
+          <button id="refreshIndicesBtn" class="refresh-btn" title="Refresh Market Data">🔄 Refresh</button>
+        </h2>
         <div class="index-wrap">
           <div class="index-box" id="nifty50">
             <div class="index-name">Nifty 50</div>
@@ -322,6 +350,7 @@ $ACCESS = $config['access_token'];
           </div>
         </div>
       </div>
+
 
       <!-- Place Order -->
       <div class="card" style="margin-top:16px">
@@ -460,11 +489,12 @@ $ACCESS = $config['access_token'];
 
       <!-- Holdings -->
 
-      <div class="card" style="margin-top:16px; position: relative;">
-        <h2 style="margin-bottom:12px;">Holdings</h2>
-        <!-- Floating Refresh Button -->
-        <button id="holdRefreshBtn" title="Refresh holdings">Refresh</button>
-
+      <!-- Holdings -->
+      <div class="card" style="margin-top:16px">
+        <h2 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Holdings</span>
+          <button id="refreshHoldingsBtn" class="refresh-btn">🔄 Refresh</button>
+        </h2>
         <table id="holdTbl">
           <thead>
             <tr>
@@ -477,41 +507,68 @@ $ACCESS = $config['access_token'];
           </thead>
           <tbody>
             <tr>
-              <td colspan="5">Loading holdings...</td>
+              <td colspan="5">Loading...</td>
             </tr>
           </tbody>
         </table>
-
       </div>
+
 
     </div>
 
   </div>
 
   <script>
-    // ===== Indices =====
-    function refreshIndices() {
-      fetch('fetch_market.php', {
-        cache: "no-store"
-      }).then(r => r.json()).then(arr => {
-        const n50 = arr.find(x => (x.exchange_token || '').includes('Nifty 50'));
-        const bn = arr.find(x => (x.exchange_token || '').includes('Nifty Bank'));
+    // ===== Market Indices (Manual Refresh Only) =====
+    async function refreshIndices() {
+      const btn = document.getElementById("refreshIndicesBtn");
+      btn.disabled = true;
+      btn.textContent = "⏳ Refreshing...";
+
+      try {
+        const r = await fetch("fetch_market.php", {
+          cache: "no-store"
+        });
+        const arr = await r.json();
+
+        const n50 = arr.find(x => (x.exchange_token || "").includes("Nifty 50"));
+        const bn = arr.find(x => (x.exchange_token || "").includes("Nifty Bank"));
+
         if (n50) {
-          document.getElementById('n50val').textContent = Number(n50.ltp).toFixed(2);
-          const t = `${Number(n50.change)>=0?'▲':'▼'} ${Number(n50.change).toFixed(2)} (${Number(n50.per_change).toFixed(2)}%)`;
-          document.getElementById('n50chg').textContent = t;
-          document.getElementById('nifty50').className = 'index-box ' + (Number(n50.change) >= 0 ? 'green' : 'red');
+          document.getElementById("n50val").textContent = Number(n50.ltp).toFixed(2);
+          const t = `${Number(n50.change) >= 0 ? "▲" : "▼"} ${Number(n50.change).toFixed(2)} (${Number(n50.per_change).toFixed(2)}%)`;
+          document.getElementById("n50chg").textContent = t;
+          document.getElementById("nifty50").className = "index-box " + (Number(n50.change) >= 0 ? "green" : "red");
         }
+
         if (bn) {
-          document.getElementById('bnval').textContent = Number(bn.ltp).toFixed(2);
-          const t = `${Number(bn.change)>=0?'▲':'▼'} ${Number(bn.change).toFixed(2)} (${Number(bn.per_change).toFixed(2)}%)`;
-          document.getElementById('bnchg').textContent = t;
-          document.getElementById('banknifty').className = 'index-box ' + (Number(bn.change) >= 0 ? 'green' : 'red');
+          document.getElementById("bnval").textContent = Number(bn.ltp).toFixed(2);
+          const t = `${Number(bn.change) >= 0 ? "▲" : "▼"} ${Number(bn.change).toFixed(2)} (${Number(bn.per_change).toFixed(2)}%)`;
+          document.getElementById("bnchg").textContent = t;
+          document.getElementById("banknifty").className = "index-box " + (Number(bn.change) >= 0 ? "green" : "red");
         }
-      });
+
+        btn.textContent = "✅ Updated";
+        setTimeout(() => {
+          btn.textContent = "🔄 Refresh";
+          btn.disabled = false;
+        }, 1500);
+      } catch (err) {
+        console.error("❌ Market fetch error:", err);
+        btn.textContent = "❌ Error";
+        setTimeout(() => {
+          btn.textContent = "🔄 Refresh";
+          btn.disabled = false;
+        }, 2000);
+      }
     }
-    setInterval(refreshIndices, 5000);
+
+    // 🟦 Manual trigger
+    document.getElementById("refreshIndicesBtn").addEventListener("click", refreshIndices);
+
+    // 🔰 Load once on page load
     refreshIndices();
+
 
     // ===== Suggestions =====
     const input = document.getElementById('stockInput');
@@ -852,56 +909,67 @@ $ACCESS = $config['access_token'];
     // ===== Holdings =====
     async function loadHoldings() {
       try {
-        const res = await fetch('fetch_holdings.php', {
-          cache: 'no-store'
+        const res = await fetch("fetch_holdings.php", {
+          cache: "no-store"
         });
         const data = await res.json();
-        const tb = document.querySelector('#holdTbl tbody');
-        tb.innerHTML = '';
+        const tb = document.querySelector("#holdTbl tbody");
+        tb.innerHTML = "";
 
-        const holdings = data.data || [];
+        const holdings = Array.isArray(data.data) ? data.data : [];
 
-        if (!Array.isArray(holdings) || holdings.length === 0) {
-          tb.innerHTML = '<tr><td colspan="5">No holdings found</td></tr>';
+        if (holdings.length === 0) {
+          tb.innerHTML = "<tr><td colspan='5'>No holdings found</td></tr>";
           return;
         }
 
+        // 🔠 Sort alphabetically by symbol (case-insensitive)
+        holdings.sort((a, b) => {
+          const s1 = (a.symbol || "").toUpperCase();
+          const s2 = (b.symbol || "").toUpperCase();
+          return s1.localeCompare(s2);
+        });
+
+        // 🧾 Render rows
         holdings.forEach(h => {
           const avg = Number(h.averagePrice || 0);
           const ltp = Number(h.closingPrice || 0);
           const qty = Number(h.sellableQuantity || 0);
           const gain = (ltp - avg) * qty;
           const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
-          const gainColor = gain >= 0 ? 'green' : 'red';
-          const logo = h.logoUrl ? `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">` : '';
+          const gainColor = gain >= 0 ? "green" : "red";
+          const logo = h.logoUrl ?
+            `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">` :
+            "";
 
-          tb.insertAdjacentHTML('beforeend', `
+          tb.insertAdjacentHTML(
+            "beforeend",
+            `
         <tr>
           <td>
-            ${logo}<b>${h.symbol || '-'}</b><br>
-            <span class="muted" style="font-size:11px;">${h.instrumentName || ''}</span>
+            ${logo}<b>${h.symbol || "-"}</b><br>
+            <span class="muted" style="font-size:11px;">${h.instrumentName || ""}</span>
           </td>
           <td>${qty}</td>
           <td>${avg.toFixed(2)}</td>
           <td>${ltp.toFixed(2)}</td>
           <td class="${gainColor}">
-            ${gain >= 0 ? '▲' : '▼'} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)
+            ${gain >= 0 ? "▲" : "▼"} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)
           </td>
         </tr>
-      `);
+      `
+          );
         });
-
       } catch (err) {
-        console.error('❌ Error loading holdings:', err);
-        document.querySelector('#holdTbl tbody').innerHTML =
-          '<tr><td colspan="5">⚠️ Error fetching holdings</td></tr>';
+        console.error("❌ Error loading holdings:", err);
+        document.querySelector("#holdTbl tbody").innerHTML =
+          "<tr><td colspan='5'>⚠️ Error fetching holdings</td></tr>";
       }
     }
 
-    // 🔄 Auto-refresh every 10 seconds
+    // 🟢 Manual + Auto Refresh (Optional)
+    document.getElementById("refreshHoldingsBtn")?.addEventListener("click", loadHoldings);
     setInterval(loadHoldings, 10000);
-
-    // Initial load
     loadHoldings();
   </script>
 
