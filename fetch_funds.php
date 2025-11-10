@@ -2,6 +2,9 @@
 session_start();
 header('Content-Type: application/json');
 
+// 🕒 Force timezone to IST (+05:30)
+date_default_timezone_set('Asia/Kolkata');
+
 // 🔒 Session Validation
 if (!isset($_SESSION['trade_token'], $_SESSION['trade_sid'], $_SESSION['trade_base'])) {
     echo json_encode(['error' => 'Session expired']);
