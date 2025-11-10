@@ -251,6 +251,48 @@ $ACCESS = $config['access_token'];
     #holdRefreshBtn:active {
       transform: scale(0.96);
     }
+
+
+    .cancel-btn {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      border: none;
+      color: white;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+      transition: 0.2s;
+    }
+
+    .cancel-btn:hover {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      transform: scale(1.05);
+    }
+
+    .cancel-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #refreshOrdersBtn {
+      float: right;
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    #refreshOrdersBtn:hover {
+      background: linear-gradient(90deg, #1e40af, #1d4ed8);
+      transform: scale(1.05);
+    }
   </style>
 </head>
 
@@ -330,8 +372,12 @@ $ACCESS = $config['access_token'];
       </div>
 
       <!-- Orders -->
-      <div class="card" style="margin-top:16px">
-        <h2>Orders</h2>
+      <!-- Orders -->
+      <div class="card" style="margin-top:16px; position: relative;">
+        <h2>
+          Orders
+          <button id="refreshOrdersBtn" title="Refresh Orders">🔄 Refresh</button>
+        </h2>
         <div class="orders-container">
           <table id="ordersTbl">
             <thead>
@@ -343,16 +389,18 @@ $ACCESS = $config['access_token'];
                 <th>Price</th>
                 <th>Avg Prc</th>
                 <th>Status</th>
+                <th>Cancel</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colspan="6">Loading...</td>
+                <td colspan="8">Loading...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
+
     </div>
 
     <!-- Right Side -->
@@ -675,54 +723,101 @@ $ACCESS = $config['access_token'];
     document.getElementById('sellBtn').onclick = () => place('S');
 
     // ===== Orders =====
+    // ===== Orders =====
     async function loadOrders() {
       try {
-        const r = await fetch('fetch_orders.php', {
-          cache: 'no-store'
+        const r = await fetch("fetch_orders.php", {
+          cache: "no-store"
         });
         const d = await r.json();
-        const tb = document.querySelector('#ordersTbl tbody');
-        tb.innerHTML = '';
+        const tb = document.querySelector("#ordersTbl tbody");
+        tb.innerHTML = "";
 
-        if (d.stat !== 'Ok' || !Array.isArray(d.data)) {
-          tb.innerHTML = '<tr><td colspan="6">No orders</td></tr>';
+        if (d.stat !== "Ok" || !Array.isArray(d.data)) {
+          tb.innerHTML = "<tr><td colspan='8'>No orders</td></tr>";
           return;
         }
 
-        // 🧠 Sort orders by latest time (descending)
+        // 🧠 Sort latest first
         const sorted = d.data
-          .filter(o => o.ordEntTm) // ignore nulls
+          .filter(o => o.ordEntTm)
           .sort((a, b) => {
-            const ta = new Date(a.ordEntTm.split(' ')[0] + ' ' + a.ordEntTm.split(' ')[1]);
-            const tb2 = new Date(b.ordEntTm.split(' ')[0] + ' ' + b.ordEntTm.split(' ')[1]);
-            return tb2 - ta; // latest first
+            const ta = new Date(a.ordEntTm);
+            const tb2 = new Date(b.ordEntTm);
+            return tb2 - ta;
           });
 
         // 🧾 Display top 15
         sorted.slice(0, 15).forEach(o => {
+          const isOpen = (o.ordSt || "").toLowerCase() === "open";
           const rej = o.rejRsn ?
             `<span class='rej-reason' style="color:#d32f2f; font-size:12px; display:block;">${o.rejRsn}</span>` :
-            '';
+            "";
+          const cancelBtn = isOpen ?
+            `<button class="cancel-btn" data-order="${o.nOrdNo}" title="Cancel Order">Cancel</button>` :
+            "-";
+
           tb.insertAdjacentHTML(
-            'beforeend',
+            "beforeend",
             `<tr>
-          <td>${o.ordEntTm || '-'}</td>
-          <td>${o.trdSym || '-'}</td>
-          <td>${o.qty || '-'}</td>
-          <td>${o.trnsTp || '-'}</td>
-          <td>${o.prc || '-'}</td>
-          <td>${o.avgPrc || '-'}</td>
-          <td>${o.ordSt || o.stat || '-'}${rej}</td>
+          <td>${o.ordEntTm || "-"}</td>
+          <td>${o.trdSym || "-"}</td>
+          <td>${o.qty || "-"}</td>
+          <td>${o.trnsTp || "-"}</td>
+          <td>${o.prc || "-"}</td>
+          <td>${o.avgPrc || "-"}</td>
+          <td>${o.ordSt || o.stat || "-"}${rej}</td>
+          <td>${cancelBtn}</td>
         </tr>`
           );
         });
+
+        // 🔴 Add cancel button listeners
+        document.querySelectorAll(".cancel-btn").forEach(btn => {
+          btn.addEventListener("click", async e => {
+            const orderNo = e.target.dataset.order;
+            if (!confirm(`❌ Cancel Order #${orderNo}?`)) return;
+
+            e.target.disabled = true;
+            e.target.textContent = "Cancelling...";
+
+            try {
+              const res = await fetch("cancel_order.php", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  on: orderNo
+                })
+              });
+
+              const result = await res.json();
+              if (result.stat === "Ok") {
+                e.target.textContent = "✅ Cancelled";
+                e.target.style.background = "linear-gradient(90deg,#16a34a,#15803d)";
+                setTimeout(loadOrders, 2000);
+              } else {
+                e.target.textContent = "❌ Failed";
+                alert("Cancel failed: " + (result.emsg || JSON.stringify(result)));
+                e.target.disabled = false;
+              }
+            } catch (err) {
+              alert("Error: " + err.message);
+              e.target.disabled = false;
+            }
+          });
+        });
       } catch (err) {
-        console.error('❌ Error loading orders:', err);
+        console.error("❌ Error loading orders:", err);
       }
     }
 
+    // 🔁 Manual + Auto Refresh
+    document.getElementById("refreshOrdersBtn").addEventListener("click", loadOrders);
     setInterval(loadOrders, 10000);
     loadOrders();
+
 
 
     // ===== Funds =====
