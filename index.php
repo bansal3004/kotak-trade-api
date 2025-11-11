@@ -43,13 +43,21 @@ $ACCESS = $config['access_token'];
       --text: #111827;
     }
 
-    body {
-      background: var(--bg);
-      font-family: "Inter", sans-serif;
-      margin: 0;
-      padding: 20px;
-      color: var(--text);
-    }
+body {
+  background: radial-gradient(
+    circle at center,
+    rgba(173, 216, 230, 0.3) 0%,    /* light sky */
+    rgba(152, 251, 152, 0.2) 40%,   /* mint green */
+    rgba(255, 255, 255, 0) 85%
+  );
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 20px;
+  color: var(--text);
+}
+
+
+
 
     .container {
       display: grid;
@@ -60,12 +68,22 @@ $ACCESS = $config['access_token'];
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-      padding: 18px 20px;
-    }
+  background: rgba(255, 255, 255, 0.87); /* soft translucent white */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+  transition: all 0.3s ease;
+}
+
+/* Optional: smooth hover lift */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
 
     h2 {
       margin: 0 0 12px 0;
@@ -221,9 +239,14 @@ $ACCESS = $config['access_token'];
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #fff;
+       background: rgba(255, 255, 255, 0.86); /* soft translucent white */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       padding: 10px 20px;
-      border-radius: 10px;
+
       margin-bottom: 20px !important;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       max-width: 1260px;
@@ -290,8 +313,8 @@ $ACCESS = $config['access_token'];
 
     #refreshOrdersBtn {
       float: right;
-      background: linear-gradient(90deg, #2563eb, #1d4ed8);
-      color: #fff;
+     background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
+  color: #004d4d;
       border: none;
       border-radius: 6px;
       padding: 4px 10px;
@@ -302,28 +325,29 @@ $ACCESS = $config['access_token'];
     }
 
     #refreshOrdersBtn:hover {
-      background: linear-gradient(90deg, #1e40af, #1d4ed8);
+       background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
+  color: #004d4d;
       transform: scale(1.05);
     }
 
     .refresh-btn {
-      background: linear-gradient(90deg, #2563eb, #1d4ed8);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
-      transition: 0.3s;
-    }
+  background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
+  color: #004d4d;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+  transition: all 0.3s ease;
+}
 
-    .refresh-btn:hover {
-      background: linear-gradient(90deg, #1e40af, #1d4ed8);
-      transform: scale(1.05);
-      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.4);
-    }
+.refresh-btn:hover {
+  box-shadow: 0 0 15px rgba(103, 232, 249, 0.7);
+  transform: translateY(-1px);
+}
+
 
     .refresh-btn:disabled {
       opacity: 0.6;
