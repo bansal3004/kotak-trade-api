@@ -1,13 +1,8 @@
 <?php
-// Load secure credentials
-// $config = require __DIR__ . '/secure.php';
-
-include("db.php");
-
+// 🧠 Show PHP errors (for debugging only)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 
 // ✅ Start session (first thing)
 if (session_status() === PHP_SESSION_NONE) {
@@ -28,14 +23,17 @@ if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
 
 $error = "";
 
+// 🧩 Handle login form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
     if ($username === $config['username'] && $password === $config['password']) {
         $_SESSION['logged_in'] = true;
-        // clear previous trade session (fresh flow)
+
+        // Clear previous Kotak session tokens
         unset($_SESSION['trade_token'], $_SESSION['trade_sid'], $_SESSION['trade_base'], $_SESSION['validated']);
+
         header("Location: kotak_login.php");
         exit;
     } else {
@@ -64,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <main class="card">
     <h1>🔐 Login</h1>
     <?php if ($error): ?><div class="err"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-
     <form method="POST">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>

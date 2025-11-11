@@ -11,16 +11,14 @@
 // server
 
 $host = 'localhost';
-$user = 'u451884548_Kotakapi';      
+$user = 'u451884548_kotakapi';      
 $pass = 'Kotakapi@3004';          
-$dbname = 'u451884548_Kotakapi';
+$dbname = 'u451884548_kotakapi';
 
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 
 if ($conn->connect_error) {
     die("❌ Connection failed: " . $conn->connect_error);
-} else {
-    echo "✅ Connected successfully!";
-}
+} 
 ?>
