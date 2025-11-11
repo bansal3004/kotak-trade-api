@@ -1,8 +1,12 @@
 <?php
-session_start();
-
 // Load secure credentials
 $config = require __DIR__ . '/secure.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
 
 // If already logged in, go to kotak TOTP step
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {

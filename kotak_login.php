@@ -1,27 +1,64 @@
 <?php
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: login.php");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/db.php';
+
+// 🔹 Load all profiles
+$profiles = [];
+$res = $conn->query("SELECT * FROM profiles ORDER BY id ASC");
+while ($row = $res->fetch_assoc()) {
+    $profiles[] = $row;
+}
+
+// 🧠 Handle Add Profile
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_profile'])) {
+    $stmt = $conn->prepare("INSERT INTO profiles (name, access_token, ucc, mobile, mpin) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $_POST['name'], $_POST['access_token'], $_POST['ucc'], $_POST['mobile'], $_POST['mpin']);
+    $stmt->execute();
+    $stmt->close();
+    header("Location: kotak_login.php");
     exit;
 }
 
-$config = require __DIR__ . '/secure.php';
+// 🗑 Handle Delete
+if (isset($_GET['del'])) {
+    $id = intval($_GET['del']);
+    $conn->query("DELETE FROM profiles WHERE id = $id");
+    if (isset($_SESSION['active_profile_id']) && $_SESSION['active_profile_id'] == $id) {
+        unset($_SESSION['active_profile_id']);
+    }
+    header("Location: kotak_login.php");
+    exit;
+}
 
-// If a TOTP is submitted, call Step 1 API and redirect with token+sid
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['totp'])) {
-    $totp = trim($_GET['totp']);
+// ✅ Handle TOTP submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
+    $active_id = intval($_POST['profile_id']);
+    $_SESSION['active_profile_id'] = $active_id;
 
-    // Step 1: Login with TOTP (View token + sid)
+    $stmt = $conn->prepare("SELECT * FROM profiles WHERE id = ?");
+    $stmt->bind_param("i", $active_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$profile) {
+        die("<p style='color:red;text-align:center;margin-top:30px;'>⚠️ Profile not found.</p>");
+    }
+
+    $totp = trim($_POST['totp']);
     $url = "https://mis.kotaksecurities.com/login/1.0/tradeApiLogin";
 
     $data = [
-        "mobileNumber" => $config['mobile'],
-        "ucc"          => $config['ucc'],
-        "totp"         => $totp
+        "mobileNumber" => $profile['mobile'],
+        "ucc" => $profile['ucc'],
+        "totp" => $totp
     ];
 
     $headers = [
-        "Authorization: {$config['access_token']}", // consumer key
+        "Authorization: {$profile['access_token']}",
         "neo-fin-key: neotradeapi",
         "Content-Type: application/json"
     ];
@@ -46,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['totp'])) {
     if (isset($result['data']['token']) && isset($result['data']['sid'])) {
         $view_token = $result['data']['token'];
         $view_sid   = $result['data']['sid'];
-        // ✅ go to Step 2 (MPIN validate) with view token+sid
         header("Location: validate.php?token=" . urlencode($view_token) . "&sid=" . urlencode($view_sid));
         exit;
     } else {
@@ -63,27 +99,152 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['totp'])) {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Kotak TOTP Login</title>
+  <title>Kotak Multi-Profile Login</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body{background:linear-gradient(135deg,#e8f5e9,#ffffff);display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Inter',sans-serif}
-    .card{background:#fff;padding:26px;width:340px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.08);text-align:center}
-    h1{font-size:20px;margin-bottom:18px;font-weight:600}
-    input{width:100%;padding:11px;margin-bottom:14px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;text-align:center;letter-spacing:3px;font-weight:600}
-    input:focus{border-color:#0aa70a;box-shadow:0 0 6px rgba(10,167,10,0.3)}
-    .btn{width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(90deg,#0aa70a,#17c317);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-    .btn:hover{box-shadow:0 0 12px rgba(10,167,10,0.6)}
-    .logout{display:inline-block;margin-top:14px;font-size:13px;color:#d32f2f;text-decoration:none}
+    body {
+      background: linear-gradient(135deg, #f3f9f4, #ffffff);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #111;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+      padding: 26px 28px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    label { font-weight: 600; font-size: 14px; }
+    select, input {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      margin-bottom: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #0aa70a;
+      box-shadow: 0 0 6px rgba(10,167,10,0.25);
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg,#0aa70a,#17c317);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      box-shadow: 0 0 10px rgba(10,167,10,0.4);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th { background: #f9fafb; }
+    .del {
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .add-box {
+      border-top: 1px solid #eee;
+      margin-top: 20px;
+      padding-top: 10px;
+    }
+    .add-box h3 {
+      margin-top: 0;
+      font-size: 15px;
+    }
+    @media(max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>🔑 Enter 6-digit TOTP</h1>
-    <form method="GET">
-      <input type="text" name="totp" maxlength="6" placeholder="123456" required>
-      <button type="submit" class="btn">Continue Login</button>
-    </form>
-    <a href="logout.php" class="logout">Logout</a>
-  </main>
+  <div class="container">
+
+    <!-- Left Side -->
+    <div class="card">
+      <h1>🔑 Login with TOTP</h1>
+      <form method="POST">
+        <label>Select Profile</label>
+        <select name="profile_id" required>
+          <option value="">— Choose Profile —</option>
+          <?php foreach ($profiles as $p): ?>
+            <option value="<?=$p['id']?>" <?=($_SESSION['active_profile_id']??'')==$p['id']?'selected':''?>>
+              <?=$p['name']?> (<?=$p['ucc']?>)
+            </option>
+          <?php endforeach; ?>
+        </select>
+
+        <label>Enter TOTP</label>
+        <input type="text" name="totp" maxlength="6" placeholder="123456" required>
+        <button type="submit" class="btn">Continue Login</button>
+      </form>
+    </div>
+
+    <!-- Right Side -->
+    <div class="card">
+      <h1>👤 Manage Profiles</h1>
+
+      <table>
+        <tr><th>Name</th><th>UCC</th><th>Mobile</th><th>Delete</th></tr>
+        <?php if (count($profiles) > 0): ?>
+          <?php foreach ($profiles as $p): ?>
+            <tr>
+              <td><?=$p['name']?></td>
+              <td><?=$p['ucc']?></td>
+              <td><?=$p['mobile']?></td>
+              <td><a href="?del=<?=$p['id']?>" class="del" onclick="return confirm('Delete this profile?')">🗑</a></td>
+            </tr>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <tr><td colspan="4" style="text-align:center;">No profiles yet</td></tr>
+        <?php endif; ?>
+      </table>
+
+      <div class="add-box">
+        <h3>➕ Add New Profile</h3>
+        <form method="POST">
+          <input type="hidden" name="add_profile" value="1">
+          <input type="text" name="name" placeholder="Profile Name" required>
+          <input type="text" name="access_token" placeholder="Access Token" required>
+          <input type="text" name="ucc" placeholder="UCC Code" required>
+          <input type="text" name="mobile" placeholder="Mobile Number" required>
+          <input type="text" name="mpin" placeholder="MPIN" required>
+          <button type="submit" class="btn" style="margin-top:6px;">Add Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
