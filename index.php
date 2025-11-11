@@ -444,12 +444,14 @@ $ACCESS = $config['access_token'];
         </div>
       </div>
 
-    </div>
-
-    <!-- response -->
+      <!-- response -->
       <div class="card" style="margin-top:16px; position: relative;">
       <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
       </div>
+
+    </div>
+
+    
 
 
     <!-- Right Side -->
