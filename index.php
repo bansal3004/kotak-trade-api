@@ -409,7 +409,6 @@ $ACCESS = $config['access_token'];
           <button id="buyBtn" class="btn buy">BUY</button>
           <button id="sellBtn" class="btn sell">SELL</button>
         </div>
-        <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
       </div>
 
 
