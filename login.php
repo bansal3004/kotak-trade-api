@@ -8,15 +8,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$config = require __DIR__ . '/secure.php';
+
+// ✅ Start session (first thing)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ✅ Include DB connection
+require_once __DIR__ . '/db.php';
 
+// ✅ Load secure credentials (from database via secure.php)
+$config = require __DIR__ . '/secure.php';
 
-// If already logged in, go to kotak TOTP step
-if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+// 🔁 If already logged in, redirect to kotak_login.php
+if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     header("Location: kotak_login.php");
     exit;
 }
