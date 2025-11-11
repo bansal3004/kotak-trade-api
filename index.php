@@ -418,7 +418,7 @@ $ACCESS = $config['access_token'];
       <div class="card" style="margin-top:16px; position: relative;">
         <h2>
           Orders
-          <button id="refreshOrdersBtn" title="Refresh Orders">🔄 Refresh</button>
+          <button id="refreshOrdersBtn" class="refresh-btn" title="Refresh Orders">🔄 Refresh</button>
         </h2>
         <div class="orders-container">
           <table id="ordersTbl">
@@ -430,6 +430,7 @@ $ACCESS = $config['access_token'];
                 <th>Side</th>
                 <th>Price</th>
                 <th>Avg Prc</th>
+                <th>Mode</th>
                 <th>Status</th>
                 <th>Cancel</th>
               </tr>
@@ -848,6 +849,7 @@ $ACCESS = $config['access_token'];
           <td>${o.trnsTp || "-"}</td>
           <td>${o.prc || "-"}</td>
           <td>${o.avgPrc || "-"}</td>
+          <td>${o.prod || "-"}</td>
           <td>${o.ordSt || o.stat || "-"}${rej}</td>
           <td>${cancelBtn}</td>
         </tr>`
