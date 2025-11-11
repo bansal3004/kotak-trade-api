@@ -1,7 +1,10 @@
 <?php
 // Load secure credentials
-$config = require __DIR__ . 'secure.php';
+// $config = require __DIR__ . '/secure.php';
 
+include("db.php");
+
+$config = require __DIR__ . '/secure.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
