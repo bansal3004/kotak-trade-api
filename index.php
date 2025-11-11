@@ -574,16 +574,16 @@ $ACCESS = $config['access_token'];
           document.getElementById("banknifty").className = "index-box " + (Number(bn.change) >= 0 ? "green" : "red");
         }
 
-        btn.textContent = "✅ Updated";
+        btn.textContent = "❤ Updated";
         setTimeout(() => {
-          btn.textContent = "🔄 Refresh";
+          btn.textContent = "⟲ Refresh";
           btn.disabled = false;
         }, 1500);
       } catch (err) {
         console.error("❌ Market fetch error:", err);
         btn.textContent = "❌ Error";
         setTimeout(() => {
-          btn.textContent = "🔄 Refresh";
+          btn.textContent = "⟲ Refresh";
           btn.disabled = false;
         }, 2000);
       }
@@ -944,9 +944,9 @@ $ACCESS = $config['access_token'];
         }
 
         if (btn) {
-          btn.textContent = "✅ Updated";
+          btn.textContent = "❤ Updated";
           setTimeout(() => {
-            btn.textContent = "🔄 Refresh";
+            btn.textContent = "⟲ Refresh";
             btn.disabled = false;
           }, 1500);
         }
@@ -955,7 +955,7 @@ $ACCESS = $config['access_token'];
         if (btn) {
           btn.textContent = "❌ Error";
           setTimeout(() => {
-            btn.textContent = "🔄 Refresh";
+            btn.textContent = "⟲ Refresh";
             btn.disabled = false;
           }, 2000);
         }
