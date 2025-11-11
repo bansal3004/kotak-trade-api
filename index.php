@@ -412,6 +412,8 @@ $ACCESS = $config['access_token'];
         <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
       </div>
 
+
+
       <!-- Orders -->
       <!-- Orders -->
       <div class="card" style="margin-top:16px; position: relative;">
@@ -443,6 +445,12 @@ $ACCESS = $config['access_token'];
       </div>
 
     </div>
+
+    <!-- response -->
+      <div class="card" style="margin-top:16px; position: relative;">
+      <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
+      </div>
+
 
     <!-- Right Side -->
     <div>
