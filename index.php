@@ -334,7 +334,7 @@ $ACCESS = $config['access_token'];
 
 <body>
   <div class="header-bar">
-    <h1 style="font-size:18px;">Kotak Trade Dashboard</h1>
+    <h1 style="font-size:18px;">Trade Dashboard</h1>
     <a href="logout.php" class="logout">Logout</a>
   </div>
 
@@ -346,8 +346,8 @@ $ACCESS = $config['access_token'];
       <!-- Market Indices -->
       <div class="card">
         <h2 style="display:flex;justify-content:space-between;align-items:center;">
-          <span>Market Indices</span>
-          <button id="refreshIndicesBtn" class="refresh-btn" title="Refresh Market Data">🔄 Refresh</button>
+          <span>F&O</span>
+          <button id="refreshIndicesBtn" class="refresh-btn" title="Refresh Market Data">⟲ Refresh</button>
         </h2>
         <div class="index-wrap">
           <div class="index-box" id="nifty50">
@@ -367,7 +367,7 @@ $ACCESS = $config['access_token'];
       <!-- Place Order -->
       <div class="card" style="margin-top:16px">
         <h2>Place Order</h2>
-        <label>Trading Symbol (CSV)</label>
+        <label>Stock Name </label>
         <input id="stockInput" placeholder="e.g. INFY-EQ, TATASTEEL-EQ" autocomplete="off" />
         <div id="suggestions" style="border:1px solid var(--border);display:none;max-height:200px;overflow:auto;border-radius:8px;"></div>
 
@@ -418,7 +418,7 @@ $ACCESS = $config['access_token'];
       <div class="card" style="margin-top:16px; position: relative;">
         <h2>
           Orders
-          <button id="refreshOrdersBtn" class="refresh-btn" title="Refresh Orders">🔄 Refresh</button>
+          <button id="refreshOrdersBtn" class="refresh-btn" title="Refresh Orders">⟲ Refresh</button>
         </h2>
         <div class="orders-container">
           <table id="ordersTbl">
@@ -463,7 +463,7 @@ $ACCESS = $config['access_token'];
       <div class="card" style="position: relative;">
         <h2 style="display:flex;justify-content:space-between;align-items:center;">
           <span>Funds</span>
-          <button id="refreshFundsBtn" class="refresh-btn" title="Refresh funds">🔄 Refresh</button>
+          <button id="refreshFundsBtn" class="refresh-btn" title="Refresh funds">⟲ Refresh</button>
         </h2>
 
         <div class="funds-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -519,7 +519,7 @@ $ACCESS = $config['access_token'];
       <div class="card hold-container" style="margin-top:16px">
         <h2 style="display:flex;justify-content:space-between;align-items:center;">
           <span>Holdings</span>
-          <button id="refreshHoldingsBtn" class="refresh-btn">🔄 Refresh</button>
+          <button id="refreshHoldingsBtn" class="refresh-btn">⟲ Refresh</button>
         </h2>
         <table id="holdTbl">
           <thead>
