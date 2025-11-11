@@ -622,7 +622,13 @@ $ACCESS = $config['access_token'];
       }
       const r = await fetch('fetch_suggestions.php?q=' + encodeURIComponent(q));
       const list = await r.json();
-      sug.innerHTML = list.map(s => `<div data-sym="${s.symbol}" style="padding:8px;cursor:pointer;">${s.symbol} • ${s.name||''}</div>`).join('');
+      sug.innerHTML = list.map(s => `
+  <div data-sym="${s.symbol}" style="padding:8px;cursor:pointer;border-bottom:1px solid #eee;">
+    <div><b>${s.symbol}</b> • ${s.name || ''}</div>
+    ${s.desc ? `<div style="font-size:11px;color:#666;margin-top:2px;">${s.desc}</div>` : ''}
+  </div>
+`).join('');
+
       sug.style.display = list.length ? 'block' : 'none';
     });
 
