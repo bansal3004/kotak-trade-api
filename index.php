@@ -908,9 +908,9 @@ $ACCESS = $config['access_token'];
         const d = await res.json();
 
         if (d && d.stat === "Ok") {
-          const totMrgnUsd = Number(d.totMrgnUsd || 0);
+          const avlCash = Number(d.avlCash || 0);
           const usedMrgn = Number(d.mrgnUsd || 0);
-          const balance = totMrgnUsd - usedMrgn;
+          const balance = avlCash - usedMrgn;
 
           document.getElementById("avlCash").textContent = "₹" + Number(d.avlCash || 0).toFixed(2);
           document.getElementById("reqMrgn").textContent = Number(d.reqdMrgn || 0).toFixed(2);
