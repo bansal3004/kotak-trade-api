@@ -3,17 +3,17 @@
 
 // localhost
 
-// $host = 'localhost';
-// $user = 'root';      
-// $pass = '';          
-// $dbname = 'kotakapi';
+$host = 'localhost';
+$user = 'root';      
+$pass = '';          
+$dbname = 'kotakapi';
 
 // server
 
-$host = 'localhost';
-$user = 'u451884548_kotakapi';      
-$pass = 'Kotakapi@3004';          
-$dbname = 'u451884548_kotakapi';
+// $host = 'localhost';
+// $user = 'u451884548_kotakapi';      
+// $pass = 'Kotakapi@3004';          
+// $dbname = 'u451884548_kotakapi';
 
 
 $conn = new mysqli($host, $user, $pass, $dbname);
