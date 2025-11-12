@@ -145,6 +145,10 @@ body {
       font-size: 14px;
     }
 
+    input {
+  width: calc(100% - 10px);
+}
+
     .btn {
       display: inline-block;
       padding: 12px;
@@ -358,9 +362,18 @@ body {
 
 <body>
   <div class="header-bar">
-    <h1 style="font-size:18px;">Trade Dashboard</h1>
-    <a href="logout.php" class="logout">Logout</a>
+  <h1 style="font-size:18px;margin:0;">Trade Dashboard</h1>
+
+  <div style="font-size:14px;color:#444;font-weight:600;">
+    Account: <span style="color:#0a7a0a;">
+      <?= htmlspecialchars($config['username']) ?>
+    </span>
+    &nbsp; (<?= htmlspecialchars($config['ucc']) ?>)
+    &nbsp; | &nbsp;
+    <a href="logout.php" class="logout" style="font-size:13px;font-weight:600;">Logout</a>
   </div>
+</div>
+
 
   <div class="container">
 
@@ -449,7 +462,7 @@ body {
             <thead>
               <tr>
                 <th>Time</th>
-                <th>Symbol</th>
+                <th>Stocks</th>
                 <th>Qty</th>
                 <th>Side</th>
                 <th>Price</th>
