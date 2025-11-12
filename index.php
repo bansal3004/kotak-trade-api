@@ -366,7 +366,7 @@ body {
 
   <div style="font-size:14px;color:#444;font-weight:600;">
     Account: <span style="color:#0a7a0a;">
-      <?= htmlspecialchars($config['username']) ?>
+      <?= htmlspecialchars($config['name']) ?>
     </span>
     &nbsp; (<?= htmlspecialchars($config['ucc']) ?>)
     &nbsp; | &nbsp;

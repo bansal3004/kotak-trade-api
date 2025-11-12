@@ -36,6 +36,7 @@ return [
     'password' => $user['password'],
     'pin'      => $user['pin'],
 
+    'name'     => $profile['name'],
     'access_token' => $profile['access_token'],
     'ucc'          => $profile['ucc'],
     'mobile'       => $profile['mobile'],
