@@ -269,7 +269,7 @@ $ACCESS = $config['access_token'];
   padding: 8px 18px;
   border-radius: 8px;
   text-decoration: none;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
   transition: all 0.3s ease;
 }
 
