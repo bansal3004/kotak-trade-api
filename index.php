@@ -1,10 +1,10 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 }
 if (!isset($_SESSION['active_profile_id'])) {
-    header("Location: kotak_login.php");
-    exit;
+  header("Location: kotak_login.php");
+  exit;
 }
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
@@ -43,18 +43,18 @@ $ACCESS = $config['access_token'];
       --text: #111827;
     }
 
-body {
-  background: radial-gradient(
-    circle at center,
-    rgba(173, 216, 230, 0.3) 0%,    /* light sky */
-    rgba(152, 251, 152, 0.2) 40%,   /* mint green */
-    rgba(255, 255, 255, 0) 85%
-  );
-  font-family: "Inter", sans-serif;
-  margin: 0;
-  padding: 20px;
-  color: var(--text);
-}
+    body {
+      background: radial-gradient(circle at center,
+          rgba(173, 216, 230, 0.3) 0%,
+          /* light sky */
+          rgba(152, 251, 152, 0.2) 40%,
+          /* mint green */
+          rgba(255, 255, 255, 0) 85%);
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: var(--text);
+    }
 
 
 
@@ -68,21 +68,22 @@ body {
     }
 
     .card {
-  background: rgba(255, 255, 255, 0.87); /* soft translucent white */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  padding: 18px 22px;
-  transition: all 0.3s ease;
-}
+      background: rgba(255, 255, 255, 0.87);
+      /* soft translucent white */
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      padding: 18px 22px;
+      transition: all 0.3s ease;
+    }
 
-/* Optional: smooth hover lift */
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-}
+    /* Optional: smooth hover lift */
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    }
 
 
     h2 {
@@ -146,8 +147,8 @@ body {
     }
 
     input {
-  width: calc(100% - 10px);
-}
+      width: calc(100% - 10px);
+    }
 
     .btn {
       display: inline-block;
@@ -217,6 +218,7 @@ body {
       max-height: 530px;
       overflow-y: auto;
     }
+
     .hold-container {
       max-height: 700px;
       overflow-y: auto;
@@ -243,13 +245,14 @@ body {
       display: flex;
       justify-content: space-between;
       align-items: center;
-       background: rgba(255, 255, 255, 0.86); /* soft translucent white */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.86);
+      /* soft translucent white */
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      padding: 15px 20px !important;
 
       margin-bottom: 20px !important;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -257,14 +260,30 @@ body {
       margin: auto;
     }
 
-    .logout {
-      background: #d32f2f;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .logout-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #7f1d1d);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+  transform: scale(1.05);
+}
+
+.logout-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
+}
+
 
     #holdRefreshBtn {
       position: absolute;
@@ -317,8 +336,9 @@ body {
 
     #refreshOrdersBtn {
       float: right;
-     background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
-  color: #004d4d;
+      background: linear-gradient(90deg, #99f6e4, #67e8f9);
+      /* mint to aqua */
+      color: #004d4d;
       border: none;
       border-radius: 6px;
       padding: 4px 10px;
@@ -329,28 +349,30 @@ body {
     }
 
     #refreshOrdersBtn:hover {
-       background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
-  color: #004d4d;
+      background: linear-gradient(90deg, #99f6e4, #67e8f9);
+      /* mint to aqua */
+      color: #004d4d;
       transform: scale(1.05);
     }
 
     .refresh-btn {
-  background: linear-gradient(90deg, #99f6e4, #67e8f9); /* mint to aqua */
-  color: #004d4d;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
-  transition: all 0.3s ease;
-}
+      background: linear-gradient(90deg, #99f6e4, #67e8f9);
+      /* mint to aqua */
+      color: #004d4d;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+      transition: all 0.3s ease;
+    }
 
-.refresh-btn:hover {
-  box-shadow: 0 0 15px rgba(103, 232, 249, 0.7);
-  transform: translateY(-1px);
-}
+    .refresh-btn:hover {
+      box-shadow: 0 0 15px rgba(103, 232, 249, 0.7);
+      transform: translateY(-1px);
+    }
 
 
     .refresh-btn:disabled {
@@ -362,17 +384,17 @@ body {
 
 <body>
   <div class="header-bar">
-  <h1 style="font-size:18px;margin:0;">Trade Dashboard</h1>
+    <h1 style="font-size:18px;margin:0;">Trade Dashboard</h1>
 
-  <div style="font-size:14px;color:#444;font-weight:600;">
-    Account: <span style="color:#0a7a0a;">
-      <?= htmlspecialchars($config['name']) ?>
-    </span>
-    &nbsp; (<?= htmlspecialchars($config['ucc']) ?>)
-    &nbsp; | &nbsp;
-    <a href="logout.php" class="logout" style="font-size:13px;font-weight:600;">Logout</a>
+    <div style="font-size:14px;color:#444;font-weight:600;">
+      Account: <span style="color:#0a7a0a;">
+        <?= htmlspecialchars($config['name']) ?>
+      </span>
+      &nbsp; (<?= htmlspecialchars($config['ucc']) ?>)
+      &nbsp; | &nbsp;
+     <a href="logout.php" class="logout-btn">Logout</a>
+    </div>
   </div>
-</div>
 
 
   <div class="container">
@@ -483,12 +505,12 @@ body {
 
       <!-- response -->
       <div class="card" style="margin-top:16px; position: relative;">
-      <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
+        <div id="status" class="muted" style="margin-top:10px;min-height:18px"></div>
       </div>
 
     </div>
 
-    
+
 
 
     <!-- Right Side -->
