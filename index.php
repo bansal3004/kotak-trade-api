@@ -548,7 +548,7 @@ body {
         <table id="holdTbl">
           <thead>
             <tr>
-              <th>Symbol</th>
+              <th>Stocks</th>
               <th>Qty</th>
               <th>Avg</th>
               <th>LTP</th>
