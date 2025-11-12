@@ -416,8 +416,8 @@ body {
           <div>
             <label>Product</label>
             <select id="product">
-              <option>CNC</option>
               <option>MTF</option>
+              <option>CNC</option>
             </select>
           </div>
           <div>
