@@ -103,7 +103,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background: linear-gradient(135deg, #f3f9f4, #ffffff);
+      background: radial-gradient(
+    circle at center,
+    rgba(173, 216, 230, 0.3) 0%,    /* light sky */
+    rgba(152, 251, 152, 0.2) 40%,   /* mint green */
+    rgba(255, 255, 255, 0) 85%
+  );
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 20px;
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 40px;
@@ -117,9 +125,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
       margin: auto;
     }
     .card {
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+     background: rgba(255, 255, 255, 0.78); /* soft translucent white */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       padding: 26px 28px;
     }
     h1 {
@@ -217,13 +228,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
       <h1>👤 Manage Profiles</h1>
 
       <table>
-        <tr><th>Name</th><th>UCC</th><th>Mobile</th><th>Delete</th></tr>
+        <tr><th>Name</th><th>UCC</th><th>Delete</th></tr>
         <?php if (count($profiles) > 0): ?>
           <?php foreach ($profiles as $p): ?>
             <tr>
               <td><?=$p['name']?></td>
               <td><?=$p['ucc']?></td>
-              <td><?=$p['mobile']?></td>
+             
               <td><a href="?del=<?=$p['id']?>" class="del" onclick="return confirm('Delete this profile?')">🗑</a></td>
             </tr>
           <?php endforeach; ?>
