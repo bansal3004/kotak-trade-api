@@ -15,6 +15,7 @@ $view_sid   = $_GET['sid'] ?? '';
 
 if (!$view_token || !$view_sid) {
     die("<p style='color:red;font-family:sans-serif;text-align:center;margin-top:30px;'>❌ Missing token or SID. Please go back and retry Step 1.</p>");
+    header("Location: login.php");
 }
 
 // ✅ Kotak API endpoint

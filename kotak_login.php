@@ -235,13 +235,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
       <h1>👤 Manage Profiles</h1>
 
       <table>
-        <tr><th>Name</th><th>UCC</th><th>Delete</th></tr>
+        <tr><th>Name</th><th>UCC</th><th>mobile</th><th>Delete</th></tr>
         <?php if (count($profiles) > 0): ?>
           <?php foreach ($profiles as $p): ?>
             <tr>
               <td><?=$p['name']?></td>
               <td><?=$p['ucc']?></td>
-             
+             <td><?=$p['mobile']?></td>
               <td><a href="?del=<?=$p['id']?>" class="del" onclick="return confirm('Delete this profile?')">🗑</a></td>
             </tr>
           <?php endforeach; ?>
