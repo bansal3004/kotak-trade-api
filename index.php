@@ -147,7 +147,7 @@ $ACCESS = $config['access_token'];
     }
 
     input {
-      width: calc(100% - 10px);
+      width: calc(100% - 24px) !important;
     }
 
     .btn {
@@ -261,28 +261,28 @@ $ACCESS = $config['access_token'];
     }
 
     .logout-btn {
-  display: inline-block;
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
-  transition: all 0.3s ease;
-}
+      display: inline-block;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+      transition: all 0.3s ease;
+    }
 
-.logout-btn:hover {
-  background: linear-gradient(135deg, #dc2626, #7f1d1d);
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
-  transform: scale(1.05);
-}
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+      transform: scale(1.05);
+    }
 
-.logout-btn:active {
-  transform: scale(0.96);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
-}
+    .logout-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
+    }
 
 
     #holdRefreshBtn {
@@ -392,7 +392,7 @@ $ACCESS = $config['access_token'];
       </span>
       &nbsp; (<?= htmlspecialchars($config['ucc']) ?>)
       &nbsp; | &nbsp;
-     <a href="logout.php" class="logout-btn">Logout</a>
+      <a href="logout.php" class="logout-btn">Logout</a>
     </div>
   </div>
 
@@ -580,6 +580,22 @@ $ACCESS = $config['access_token'];
           <span>Holdings</span>
           <button id="refreshHoldingsBtn" class="refresh-btn">⟲ Refresh</button>
         </h2>
+        <!-- ✅ Total P&L Summary Bar -->
+        <div id="totalPL" style="
+      margin-top:12px;
+      text-align:right;
+      font-weight:600;
+      font-size:14px;
+      padding:8px;
+      border-top:1px solid #eee;
+      border-bottom:1px solid #eee;
+      color:#111;
+      border-radius:0 0 10px 10px;
+      background-color:white;
+  ">
+          Total P&L: —
+        </div>
+
         <table id="holdTbl">
           <thead>
             <tr>
@@ -596,6 +612,8 @@ $ACCESS = $config['access_token'];
             </tr>
           </tbody>
         </table>
+
+        
       </div>
 
 
@@ -1028,66 +1046,71 @@ $ACCESS = $config['access_token'];
     loadFunds();
 
 
-    // ===== Holdings =====
-    async function loadHoldings() {
-      try {
-        const res = await fetch("fetch_holdings.php", {
-          cache: "no-store"
-        });
-        const data = await res.json();
-        const tb = document.querySelector("#holdTbl tbody");
-        tb.innerHTML = "";
+   async function loadHoldings() {
+  try {
+    const res = await fetch("fetch_holdings.php", { cache: "no-store" });
+    const data = await res.json();
+    const tb = document.querySelector("#holdTbl tbody");
+    tb.innerHTML = "";
 
-        const holdings = Array.isArray(data.data) ? data.data : [];
+    const holdings = Array.isArray(data.data) ? data.data : [];
 
-        if (holdings.length === 0) {
-          tb.innerHTML = "<tr><td colspan='5'>No holdings found</td></tr>";
-          return;
-        }
+    if (holdings.length === 0) {
+      tb.innerHTML = "<tr><td colspan='5'>No holdings found</td></tr>";
+      document.getElementById("totalPL").textContent = "Total P&L: ₹0.00 (0.00%)";
+      return;
+    }
 
-        // 🔠 Sort alphabetically by symbol (case-insensitive)
-        holdings.sort((a, b) => {
-          const s1 = (a.symbol || "").toUpperCase();
-          const s2 = (b.symbol || "").toUpperCase();
-          return s1.localeCompare(s2);
-        });
+    // Sort alphabetically
+    holdings.sort((a, b) => (a.symbol || "").localeCompare(b.symbol || ""));
 
-        // 🧾 Render rows
-        holdings.forEach(h => {
-          const avg = Number(h.averagePrice || 0);
-          const ltp = Number(h.closingPrice || 0);
-          const qty = Number(h.sellableQuantity || 0);
-          const gain = (ltp - avg) * qty;
-          const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
-          const gainColor = gain >= 0 ? "green" : "red";
-          const logo = h.logoUrl ?
-            `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">` :
-            "";
+    let totalGain = 0;
+    let totalCost = 0;
 
-          tb.insertAdjacentHTML(
-            "beforeend",
-            `
+    holdings.forEach(h => {
+      const avg = Number(h.averagePrice || 0);
+      const ltp = Number(h.closingPrice || 0);
+      const qty = Number(h.sellableQuantity || 0);
+      const gain = (ltp - avg) * qty;
+      const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
+      const gainColor = gain >= 0 ? "green" : "red";
+      const logo = h.logoUrl
+        ? `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">`
+        : "";
+
+      totalGain += gain;
+      totalCost += avg * qty;
+
+      tb.insertAdjacentHTML(
+        "beforeend",
+        `
         <tr>
-          <td>
-            ${logo}<b>${h.symbol || "-"}</b><br>
-            <span class="muted" style="font-size:11px;">${h.instrumentName || ""}</span>
-          </td>
+          <td>${logo}<b>${h.symbol || "-"}</b><br>
+          <span class="muted" style="font-size:11px;">${h.instrumentName || ""}</span></td>
           <td>${qty}</td>
           <td>${avg.toFixed(2)}</td>
           <td>${ltp.toFixed(2)}</td>
-          <td class="${gainColor}">
-            ${gain >= 0 ? "▲" : "▼"} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)
-          </td>
+          <td class="${gainColor}">${gain >= 0 ? "▲" : "▼"} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)</td>
         </tr>
-      `
-          );
-        });
-      } catch (err) {
-        console.error("❌ Error loading holdings:", err);
-        document.querySelector("#holdTbl tbody").innerHTML =
-          "<tr><td colspan='5'>⚠️ Error fetching holdings</td></tr>";
-      }
-    }
+        `
+      );
+    });
+
+    // ✅ Total P&L Summary
+    const totalPct = totalCost ? (totalGain / totalCost) * 100 : 0;
+    const color = totalGain >= 0 ? "#0aa70a" : "#d32f2f";
+    const totalDiv = document.getElementById("totalPL");
+    totalDiv.style.color = color;
+    totalDiv.textContent = `Total P&L: ₹${totalGain.toFixed(2)} (${totalPct.toFixed(2)}%)`;
+
+  } catch (err) {
+    console.error("❌ Error loading holdings:", err);
+    document.querySelector("#holdTbl tbody").innerHTML =
+      "<tr><td colspan='5'>⚠️ Error fetching holdings</td></tr>";
+    document.getElementById("totalPL").textContent = "Total P&L: —";
+  }
+}
+
 
     // 🟢 Manual + Auto Refresh (Optional)
     document.getElementById("refreshHoldingsBtn")?.addEventListener("click", loadHoldings);
