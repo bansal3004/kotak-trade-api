@@ -46,9 +46,7 @@ $ACCESS = $config['access_token'];
     body {
       background: radial-gradient(circle at center,
           rgba(173, 216, 230, 0.3) 0%,
-          /* light sky */
           rgba(152, 251, 152, 0.2) 40%,
-          /* mint green */
           rgba(255, 255, 255, 0) 85%);
       font-family: "Inter", sans-serif;
       margin: 0;
@@ -56,20 +54,33 @@ $ACCESS = $config['access_token'];
       color: var(--text);
     }
 
-
-
-
+    /* =========================
+       🚀 NEW FLEXBOX CONTAINER
+    ==========================*/
     .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 20px;
       max-width: 1300px;
       margin: auto;
+      flex-wrap: wrap;
+    }
+
+    .container > div {
+      flex: 1;
+      min-width: 350px; /* mobile auto stack */
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      body {
+        padding: 10px;
+      }
     }
 
     .card {
       background: rgba(255, 255, 255, 0.87);
-      /* soft translucent white */
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -79,12 +90,10 @@ $ACCESS = $config['access_token'];
       transition: all 0.3s ease;
     }
 
-    /* Optional: smooth hover lift */
     .card:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
     }
-
 
     h2 {
       margin: 0 0 12px 0;
@@ -224,7 +233,6 @@ $ACCESS = $config['access_token'];
       overflow-y: auto;
     }
 
-
     .orders-container::-webkit-scrollbar {
       width: 6px;
     }
@@ -241,23 +249,52 @@ $ACCESS = $config['access_token'];
       margin-top: 2px;
     }
 
+    .refresh-btn {
+  background: linear-gradient(90deg, #99f6e4, #67e8f9);
+  color: #004d4d;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  box-shadow: 0 0 15px rgba(103, 232, 249, 0.7);
+  transform: translateY(-1px);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
     .header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: rgba(255, 255, 255, 0.86);
-      /* soft translucent white */
       backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.25);
       border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       padding: 15px 20px !important;
 
       margin-bottom: 20px !important;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       max-width: 1260px;
       margin: auto;
+    }
+
+    @media(max-width: 768px) {
+      .header-bar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px !important;
+      }
     }
 
     .logout-btn {
@@ -275,7 +312,6 @@ $ACCESS = $config['access_token'];
 
     .logout-btn:hover {
       background: linear-gradient(135deg, #dc2626, #7f1d1d);
-      box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
       transform: scale(1.05);
     }
 
@@ -283,106 +319,11 @@ $ACCESS = $config['access_token'];
       transform: scale(0.96);
       box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
     }
-
-
-    #holdRefreshBtn {
-      position: absolute;
-      top: 5px;
-      right: 20px;
-      background: linear-gradient(135deg, #2563eb, #1e40af);
-      color: #fff;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      padding: 5px 12px;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-      transition: 0.3s ease;
-      margin-top: 10px;
-    }
-
-    #holdRefreshBtn:hover {
-      background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-      transform: scale(1.05);
-    }
-
-    #holdRefreshBtn:active {
-      transform: scale(0.96);
-    }
-
-
-    .cancel-btn {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      border: none;
-      color: white;
-      padding: 4px 10px;
-      font-size: 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
-      transition: 0.2s;
-    }
-
-    .cancel-btn:hover {
-      background: linear-gradient(135deg, #dc2626, #7f1d1d);
-      transform: scale(1.05);
-    }
-
-    .cancel-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #refreshOrdersBtn {
-      float: right;
-      background: linear-gradient(90deg, #99f6e4, #67e8f9);
-      /* mint to aqua */
-      color: #004d4d;
-      border: none;
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    #refreshOrdersBtn:hover {
-      background: linear-gradient(90deg, #99f6e4, #67e8f9);
-      /* mint to aqua */
-      color: #004d4d;
-      transform: scale(1.05);
-    }
-
-    .refresh-btn {
-      background: linear-gradient(90deg, #99f6e4, #67e8f9);
-      /* mint to aqua */
-      color: #004d4d;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
-      transition: all 0.3s ease;
-    }
-
-    .refresh-btn:hover {
-      box-shadow: 0 0 15px rgba(103, 232, 249, 0.7);
-      transform: translateY(-1px);
-    }
-
-
-    .refresh-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
   </style>
 </head>
 
 <body>
+
   <div class="header-bar">
     <h1 style="font-size:18px;margin:0;">Trade Dashboard</h1>
 
@@ -580,21 +521,23 @@ $ACCESS = $config['access_token'];
           <span>Holdings</span>
           <button id="refreshHoldingsBtn" class="refresh-btn">⟲ Refresh</button>
         </h2>
+        <!-- Total Invested -->
+<div id="totalInvested" style="
+    margin-top:12px;
+    text-align:right;
+    font-weight:600;
+    font-size:14px;
+    padding:8px;
+    border-top:1px solid #eee;
+    border-bottom:1px solid #eee;
+    color:#111;
+    border-radius:10px 10px 0 0;
+    background-color:white;
+">
+  Total Invested: —
+</div>
         <!-- ✅ Total P&L Summary Bar -->
-        <div id="totalPL" style="
-      margin-top:12px;
-      text-align:right;
-      font-weight:600;
-      font-size:14px;
-      padding:8px;
-      border-top:1px solid #eee;
-      border-bottom:1px solid #eee;
-      color:#111;
-      border-radius:0 0 10px 10px;
-      background-color:white;
-  ">
-          Total P&L: —
-        </div>
+        <div id="totalPL" style="margin-top:12px; text-align:right; font-weight:600; font-size:14px; padding:8px; border-top:1px solid #eee; border-bottom:1px solid #eee; color:#111; border-radius:0 0 10px 10px; background-color:white;">Total P&L: —</div>
 
         <table id="holdTbl">
           <thead>
@@ -613,7 +556,7 @@ $ACCESS = $config['access_token'];
           </tbody>
         </table>
 
-        
+
       </div>
 
 
@@ -1046,7 +989,10 @@ $ACCESS = $config['access_token'];
     loadFunds();
 
 
-   async function loadHoldings() {
+    // =======================
+//   LOAD HOLDINGS (UPDATED)
+// =======================
+async function loadHoldings() {
   try {
     const res = await fetch("fetch_holdings.php", { cache: "no-store" });
     const data = await res.json();
@@ -1058,10 +1004,11 @@ $ACCESS = $config['access_token'];
     if (holdings.length === 0) {
       tb.innerHTML = "<tr><td colspan='5'>No holdings found</td></tr>";
       document.getElementById("totalPL").textContent = "Total P&L: ₹0.00 (0.00%)";
+      document.getElementById("totalInvested").textContent = "Total Invested: ₹0.00";
       return;
     }
 
-    // Sort alphabetically
+    // 🔠 Alphabetical sort
     holdings.sort((a, b) => (a.symbol || "").localeCompare(b.symbol || ""));
 
     let totalGain = 0;
@@ -1071,51 +1018,72 @@ $ACCESS = $config['access_token'];
       const avg = Number(h.averagePrice || 0);
       const ltp = Number(h.closingPrice || 0);
       const qty = Number(h.sellableQuantity || 0);
+
       const gain = (ltp - avg) * qty;
       const gainPct = avg ? ((ltp - avg) / avg) * 100 : 0;
+
       const gainColor = gain >= 0 ? "green" : "red";
+
       const logo = h.logoUrl
         ? `<img src="${h.logoUrl}" width="20" style="vertical-align:middle;border-radius:4px;margin-right:6px;">`
         : "";
 
+      // ⏳ accumulate totals
       totalGain += gain;
-      totalCost += avg * qty;
+      totalCost += (avg * qty);
 
       tb.insertAdjacentHTML(
         "beforeend",
         `
         <tr>
-          <td>${logo}<b>${h.symbol || "-"}</b><br>
-          <span class="muted" style="font-size:11px;">${h.instrumentName || ""}</span></td>
+          <td>
+            ${logo}<b>${h.symbol || "-"}</b><br>
+            <span class="muted" style="font-size:11px;">${h.instrumentName || ""}</span>
+          </td>
           <td>${qty}</td>
           <td>${avg.toFixed(2)}</td>
           <td>${ltp.toFixed(2)}</td>
-          <td class="${gainColor}">${gain >= 0 ? "▲" : "▼"} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)</td>
+          <td class="${gainColor}">
+            ${gain >= 0 ? "▲" : "▼"} ₹${gain.toFixed(2)} (${gainPct.toFixed(2)}%)
+          </td>
         </tr>
         `
       );
     });
 
-    // ✅ Total P&L Summary
+    // =======================
+    //    TOTAL SUMMARIES
+    // =======================
+
+    // 💰 Total Invested
+    document.getElementById("totalInvested").textContent =
+      `Total Invested: ₹${totalCost.toFixed(2)}`;
+
+    // 📈 Total P&L Summary
     const totalPct = totalCost ? (totalGain / totalCost) * 100 : 0;
     const color = totalGain >= 0 ? "#0aa70a" : "#d32f2f";
+
     const totalDiv = document.getElementById("totalPL");
     totalDiv.style.color = color;
-    totalDiv.textContent = `Total P&L: ₹${totalGain.toFixed(2)} (${totalPct.toFixed(2)}%)`;
+    totalDiv.textContent =
+      `Total P&L: ₹${totalGain.toFixed(2)} (${totalPct.toFixed(2)}%)`;
 
   } catch (err) {
     console.error("❌ Error loading holdings:", err);
+
     document.querySelector("#holdTbl tbody").innerHTML =
       "<tr><td colspan='5'>⚠️ Error fetching holdings</td></tr>";
+
+    document.getElementById("totalInvested").textContent = "Total Invested: —";
     document.getElementById("totalPL").textContent = "Total P&L: —";
   }
 }
 
+// 🟢 Manual + Auto Refresh
+document.getElementById("refreshHoldingsBtn")?.addEventListener("click", loadHoldings);
+setInterval(loadHoldings, 10000);
+loadHoldings();
 
-    // 🟢 Manual + Auto Refresh (Optional)
-    document.getElementById("refreshHoldingsBtn")?.addEventListener("click", loadHoldings);
-    setInterval(loadHoldings, 10000);
-    loadHoldings();
   </script>
 
 

@@ -114,30 +114,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
     body {
       background: radial-gradient(circle at center,
           rgba(173, 216, 230, 0.3) 0%,
-          /* light sky */
           rgba(152, 251, 152, 0.2) 40%,
-          /* mint green */
           rgba(255, 255, 255, 0) 85%);
       font-family: "Inter", sans-serif;
-      margin: 0;
-      padding: 20px;
-      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 40px;
       color: #111;
     }
 
+    /* ⭐⭐ ONLY CHANGE: GRID → FLEX ⭐⭐ */
     .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 30px;
       max-width: 1100px;
       margin: auto;
     }
 
+    .container > div {
+      flex: 1;
+    }
+
+    @media(max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+    /* ⭐⭐ END FLEXBOX UPDATE ⭐⭐ */
+
+
     .card {
       background: rgba(255, 255, 255, 0.78);
-      /* soft translucent white */
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -226,102 +232,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
       font-size: 15px;
     }
 
-    @media(max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
+    .logout-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+      transition: all 0.3s ease;
     }
 
-    .logout-btn {
-  display: inline-block;
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 18px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
-  transition: all 0.3s ease;
-}
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
+      transform: scale(1.05);
+    }
 
-.logout-btn:hover {
-  background: linear-gradient(135deg, #dc2626, #7f1d1d);
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7);
-  transform: scale(1.05);
-}
-
-.logout-btn:active {
-  transform: scale(0.96);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
-}
-
+    .logout-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.8) inset;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
 
-  <!-- <div class="card">
-    logout
-  </div> -->
     <!-- Left Side -->
-     <div>
-    <div class="card">
-      <h1>🔑 Login with TOTP</h1>
-      <form method="POST">
-        <label>Select Profile</label>
-        <select name="profile_id" required>
-          <option value="">— Choose Profile —</option>
-          <?php foreach ($profiles as $p): ?>
-            <option value="<?= $p['id'] ?>" <?= ($_SESSION['active_profile_id'] ?? '') == $p['id'] ? 'selected' : '' ?>>
-              <?= $p['name'] ?> (<?= $p['ucc'] ?>)
-            </option>
-          <?php endforeach; ?>
-        </select>
+    <div>
+      <div class="card">
+        <h1>🔑 Login with TOTP</h1>
+        <form method="POST">
+          <label>Select Profile</label>
+          <select name="profile_id" required>
+            <option value="">— Choose Profile —</option>
+            <?php foreach ($profiles as $p): ?>
+              <option value="<?= $p['id'] ?>" <?= ($_SESSION['active_profile_id'] ?? '') == $p['id'] ? 'selected' : '' ?>>
+                <?= $p['name'] ?> (<?= $p['ucc'] ?>)
+              </option>
+            <?php endforeach; ?>
+          </select>
 
-        <label>Enter TOTP</label>
-        <input type="text" name="totp" maxlength="6" placeholder="123456" required>
-        <button type="submit" class="btn">Continue Login</button>
-      </form>
-    </div>
-    
-
-    <!-- profile -->
-
-    <div class="card" style="margin-top: 10px;">
-      <div style="display: flex; justify-content: space-between; align-items:center">
-        <h3>👤 Manage Profiles</h3> <a href="logout.php" class="logout-btn">Logout</a>
-
+          <label>Enter TOTP</label>
+          <input type="text" name="totp" maxlength="6" placeholder="123456" required>
+          <button type="submit" class="btn">Continue Login</button>
+        </form>
       </div>
 
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>UCC</th>
-          <th>Delete</th>
-        </tr>
-        <?php if (count($profiles) > 0): ?>
-          <?php foreach ($profiles as $p): ?>
-            <tr>
-              <td><?= $p['name'] ?></td>
-              <td><?= $p['ucc'] ?></td>
+      <div class="card" style="margin-top: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items:center">
+          <h3>👤 Manage Profiles</h3>
+          <a href="logout.php" class="logout-btn">Logout</a>
+        </div>
 
-              <td><a href="?del=<?= $p['id'] ?>" class="del" onclick="return confirm('Delete this profile?')">🗑</a></td>
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
+        <table>
           <tr>
-            <td colspan="4" style="text-align:center;">No profiles yet</td>
+            <th>Name</th>
+            <th>UCC</th>
+            <th>Delete</th>
           </tr>
-        <?php endif; ?>
-      </table>
-  </div>
-  </div>
+          <?php if (count($profiles) > 0): ?>
+            <?php foreach ($profiles as $p): ?>
+              <tr>
+                <td><?= $p['name'] ?></td>
+                <td><?= $p['ucc'] ?></td>
+                <td>
+                  <a href="?del=<?= $p['id'] ?>" class="del" onclick="return confirm('Delete this profile?')">🗑</a>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="4" style="text-align:center;">No profiles yet</td>
+            </tr>
+          <?php endif; ?>
+        </table>
+      </div>
+    </div>
 
     <!-- Right Side -->
     <div class="card">
-
       <div class="add-box">
         <h2>➕ Add New Profile</h2>
         <form method="POST">
@@ -335,6 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
         </form>
       </div>
     </div>
+
   </div>
 </body>
 
