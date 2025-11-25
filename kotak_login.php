@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
         flex-direction: column;
       }
       .card{
-        width: 800px;
+        width: 700px;
       }
     }
     /* ⭐⭐ END FLEXBOX UPDATE ⭐⭐ */

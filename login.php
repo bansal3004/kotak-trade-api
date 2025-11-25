@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     @media(max-width: 1200px) {
      
       .card{
-        width: 800px;
+        width: 700px;
       }
     }
 
