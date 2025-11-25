@@ -77,6 +77,9 @@ $ACCESS = $config['access_token'];
       body {
         padding: 10px;
       }
+      .card{
+        width: 500px;
+      }
     }
 
     .card {
