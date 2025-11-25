@@ -80,6 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       text-align: center
     }
 
+    @media(max-width: 1200px) {
+     
+      .card{
+        width: 800px;
+      }
+    }
+
     h1 {
       font-size: 20px;
       margin-bottom: 18px;
