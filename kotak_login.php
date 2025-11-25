@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['totp'])) {
       flex: 1;
     }
 
-    @media(max-width: 768px) {
+    @media(max-width: 1200px) {
       .container {
         flex-direction: column;
       }

@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       padding: 26px;
-      width: 340px;
+      width: 440px;
       border-radius: 14px;
       
       text-align: center

@@ -70,7 +70,7 @@ $ACCESS = $config['access_token'];
       min-width: 350px; /* mobile auto stack */
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1200px) {
       .container {
         flex-direction: column;
       }
